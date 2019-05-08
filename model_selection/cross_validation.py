@@ -44,11 +44,11 @@ def GroupKFoldAssign(df, group, n_folds=3):
     # Floor of the Number of Groups divided by Number of Folds
     groupNo_div_n = int(np.floor(no_of_group/n_folds))
     remainder = no_of_group % n_folds
-    # Create fold list
-    fold = list(range(5)) * groupNo_div_n + [i for i in range(remainder)]
+    # Create fold list based on number of folds
+    fold = list(range(n_folds)) * groupNo_div_n + [i for i in range(remainder)]
     # Return data frame of Unique Groups with their Fold Numbers
     fold_df = pd.DataFrame(
             {group:uniq, 'GroupKFoldCol':fold},
-                           index=range(len(uniq))
+                           index=list(range(no_of_group))
                            )
     return(fold_df)
