@@ -4,10 +4,8 @@ Created on Thu Apr 18 13:08:25 2019
 
 @author: XUA
 """
-import pandas as pd
 from h2o.grid.grid_search import H2OGridSearch
 
-from ..preprocessing import dict_merge_key
 from ..model_selection import GridCVResults
 from ..model_selection import GridCVResultsWithMaxMetric
 
