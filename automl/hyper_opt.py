@@ -8,8 +8,12 @@ from h2o.grid.grid_search import H2OGridSearch
 
 from ..model_selection import GridCVResults
 from ..model_selection import GridCVResultsWithMaxMetric
+from ..model_selection import RankingMetricScorer
 
 class hyper_opt:
+    """
+    Flexible Hyperparameter Optimizer for h2o-py
+    """
     def __init__(self, y_name, models_list, params_list, col_list,
                         train, valid=None):
         self.y_name = y_name
@@ -107,6 +111,7 @@ class hyper_opt:
         # Store Grid Search in the class
         self.grid_search_list = grid_search_trained_list
 
+
     def AllGridCVResults(self, metric):
         """
         Return Grid Search Results Datasets in a list on specified metric
@@ -129,6 +134,7 @@ class hyper_opt:
                      GridCVResults(g, metric, valid),
                      self.grid_search_list))
         return(grid_search_results_list)
+
 
     def AllGridCVResultsWithMaxMetric(self, maxmetric_name=None):
         """
@@ -155,11 +161,25 @@ class hyper_opt:
         if self.grid_search_list==None:
             print('Grid Search has not been performed yet\n')
         else:
-            if self.valid==None:
+            if self.valid == None:
                 valid = False
             else:
                 valid = True
             grid_search_results_list = list(map(lambda g:
                      GridCVResultsWithMaxMetric(g, maxmetric_name, valid),
+                     self.grid_search_list))
+        return(grid_search_results_list)
+
+
+    def RankingMetricScorerTrainValXval(self, ranking_metric_function):
+        if self.grid_search_list==None:
+            print('Grid Search has not been performed yet\n')
+        else:
+            if self.valid == None:
+                valid = False
+            else:
+                valid = True
+            grid_search_results_list = list(map(lambda model:
+                     RankingMetricScorer(model, ranking_metric_function, valid),
                      self.grid_search_list))
         return(grid_search_results_list)

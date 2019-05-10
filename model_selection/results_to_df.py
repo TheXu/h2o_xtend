@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Apr 19 16:36:26 2019
+h2o-xtend Machine Learning Library Extensions
+Created on 2019
 
-@author: XUA
+@author: Alex Xu <ayx2@case.edu>
 """
 import pandas as pd
 import h2o
@@ -127,16 +128,21 @@ def GridCVResultsWithMaxMetric(grid_search, maxmetric_name=None, valid=False):
         get_grid(sort_by='auc', decreasing=True)
     # Train and Cross Validation AUC's and F1's
     perf3_df = GridCVResults(grid_search_perf1, 'auc', valid=valid)
+    if valid==True:
+        sort_by_metric = 'valid_' + maxmetric_name
+    elif valid == False:
+        sort_by_metric = 'xval_' + maxmetric_name
+
     # If we want to add another metric
     if maxmetric_name != None:
         # Find a model that improves Precision and Recall Curve
         grid_search_perf2 = grid_search.\
-            get_grid(sort_by='f1', decreasing=True)
+            get_grid(sort_by=maxmetric_name, decreasing=True)
         # Train and Cross Validation AUC's and F1's
         perf2_df =\
             GridCVResults(grid_search_perf2, maxmetric_name, valid=valid).\
             applymap(lambda x: x[0][1]).\
-            sort_values(['valid_max' + maxmetric_name], ascending=False)
+            sort_values([sort_by_metric], ascending=False)
         # Merge
         perf3_df = pd.\
             merge(perf3_df, perf2_df, how='inner',

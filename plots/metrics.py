@@ -57,7 +57,7 @@ def AveragePrecisionScore(model, test_data, xval=False):
     print('H2O Algorithm Used: ')
     print(model.algo)
     if xval==False:
-        print('\nUsing Validation Data')
+        print('\nNot using cross validation predictions')
         prob = model.predict(test_data)[2].as_data_frame()
     elif xval==True:
         print('\nUsing Training Data to validate cross validation predictions')
@@ -66,7 +66,7 @@ def AveragePrecisionScore(model, test_data, xval=False):
     average_precision =\
     _precision_recall_curve_(
             test_data[model._model_json["response_column_name"]].\
-            as_data_frame(),
+            as_data_frame().dropna(),
             prob
             )
     return(average_precision)

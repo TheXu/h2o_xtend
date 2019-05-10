@@ -12,9 +12,15 @@ from .results_to_df import GridCVResultsWithMaxMetric
 
 from .cross_validation import GroupKFoldAssign
 
+from .metrics import RankingMetricScorer
+from .metrics import RankingMetricScorerTrainValXval
+
 __all__ = [
     'GridCVResults',
     'ModelIdsResults',
+    'get_var_imp',
     'GridCVResultsWithMaxMetric',
-    'GroupKFoldAssign'
+    'GroupKFoldAssign',
+    'RankingMetricScorer',
+    'RankingMetricScorerTrainValXval'
 ]
