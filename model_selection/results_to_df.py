@@ -9,12 +9,14 @@ import pandas as pd
 import h2o
 from IPython.display import display
 
+from .metrics import RankingMetricScorerTrainValXval
+
 from ..preprocessing import dict_merge_key
 from ..plots import std_coef_plot
 
 def GridCVResults(grid_search, metric, valid=False):
     """
-    cv_results_: Function that takes an h2o grid search object and extracts training and cross validation
+    Function that takes an h2o grid search object and extracts training and cross validation
     metrics into a Pandas DataFrame along with grid search id's
     
     Parameters
@@ -59,7 +61,7 @@ def GridCVResults(grid_search, metric, valid=False):
 
 def ModelIdsResults(model_ids_list, metric, valid=False):
     """
-    comp_train_xval: Function that takes list of model_ids from h2o and extracts training and cross validation
+    Function that takes list of model_ids from h2o and extracts training and cross validation
     metrics into a Pandas DataFrame along with model_ids
     
     Parameters
@@ -128,7 +130,7 @@ def GridCVResultsWithMaxMetric(grid_search, maxmetric_name=None, valid=False):
         get_grid(sort_by='auc', decreasing=True)
     # Train and Cross Validation AUC's and F1's
     perf3_df = GridCVResults(grid_search_perf1, 'auc', valid=valid)
-    if valid==True:
+    if valid == True:
         sort_by_metric = 'valid_' + maxmetric_name
     elif valid == False:
         sort_by_metric = 'xval_' + maxmetric_name
@@ -150,6 +152,52 @@ def GridCVResultsWithMaxMetric(grid_search, maxmetric_name=None, valid=False):
     # Display
     display(perf3_df)
     return(perf3_df)
+
+
+def GridCVResultsRankingMetric(grid_search, ranking_metric_function,
+                               training_frame, validation_frame=None):
+    """
+    Function that takes an h2o grid search object and extracts training and cross validation
+    metrics into a Pandas DataFrame along with grid search id's
+
+    Parameters
+    ----------
+    grid_search : h2o.grid.grid_search.H2OGridSearch
+
+    ranking_metric_function : function
+        Ranking metric function where the first two parameters are True Target
+        Values, and Predicted Score Values
+
+    training_frame : H2OFrame
+        Dataset of training dataset
+
+    validation_frame : H2OFrame, optional
+        Dataset of validation dataset
+
+    Returns
+    -------
+    ranking_metric_df: pandas.dataframe
+        training and cross validation (and validation) ranking metrics into a
+        Pandas DataFrame along with grid search id's
+    """
+    # Iterate over grid search models, and put all results into a dataframe
+    ranking_metric_df = pd.concat(list(map(
+            lambda model: RankingMetricScorerTrainValXval(model,
+                                                          ranking_metric_function,
+                                                          training_frame,
+                                                          validation_frame),
+                                                          grid_search.models
+                                                          )))
+    # Sort by Metric defined
+    if validation_frame != None:
+        # If we have validation frame, sort by validation metric
+        sort_by_metric = 'valid_' + ranking_metric_function.__name__
+    elif validation_frame == None:
+        # Else sort by xval metrics
+        sort_by_metric = 'xval_' + ranking_metric_function.__name__
+    ranking_metric_df = ranking_metric_df.sort_values([sort_by_metric],
+                                                      ascending=False)
+    return(ranking_metric_df)
 
 
 def get_var_imp(h2o_model, no_top_features=20):

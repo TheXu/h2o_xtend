@@ -8,7 +8,7 @@ from h2o.grid.grid_search import H2OGridSearch
 
 from ..model_selection import GridCVResults
 from ..model_selection import GridCVResultsWithMaxMetric
-from ..model_selection import RankingMetricScorer
+from ..model_selection import GridCVResultsRankingMetric
 
 class hyper_opt:
     """
@@ -155,8 +155,8 @@ class hyper_opt:
         
         Returns
         -------
-        perf3_df : pandas.DataFrame
-            Dataset of performance metrics for train, xval, valid
+        grid_search_results_list : list
+            list of Datasets of performance metrics for train, xval, valid
         """
         if self.grid_search_list==None:
             print('Grid Search has not been performed yet\n')
@@ -171,15 +171,28 @@ class hyper_opt:
         return(grid_search_results_list)
 
 
-    def RankingMetricScorerTrainValXval(self, ranking_metric_function):
+    def AllGridCVResultsRankingMetric(self, ranking_metric_function):
+        """
+        Create Results Data Frame on performance of chosen ranking metric
+
+        Parameters
+        ----------
+        grid_search : h2o.grid.grid_search.H2OGridSearch
+
+        ranking_metric_function : function
+            Ranking metric function where the first two parameters are True
+            Target Values, and Predicted Score Values
+
+        Returns
+        -------
+        grid_search_results_list : list
+            list of Datasets of performance metrics for train, xval, valid
+        """
         if self.grid_search_list==None:
             print('Grid Search has not been performed yet\n')
         else:
-            if self.valid == None:
-                valid = False
-            else:
-                valid = True
             grid_search_results_list = list(map(lambda model:
-                     RankingMetricScorer(model, ranking_metric_function, valid),
+                     GridCVResultsRankingMetric(model, ranking_metric_function,
+                                                self.train, self.valid),
                      self.grid_search_list))
         return(grid_search_results_list)
