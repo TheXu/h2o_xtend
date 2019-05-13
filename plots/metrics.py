@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import precision_recall_curve, average_precision_score
 from sklearn.utils.fixes import signature
 
+from ..model_selection import RankingMetricScorer
+
 def _precision_recall_curve_(y_true, prob):
     """
     Create precision-recall curve for a 2-Class Classifier and return the Average Precision Score
@@ -54,19 +56,6 @@ def AveragePrecisionScore(model, test_data, xval=False):
 
     xval : bool
     """
-    print('H2O Algorithm Used: ')
-    print(model.algo)
-    if xval==False:
-        print('\nNot using cross validation predictions')
-        prob = model.predict(test_data)[2].as_data_frame()
-    elif xval==True:
-        print('\nUsing Training Data to validate cross validation predictions')
-        prob = model.cross_validation_holdout_predictions()[2].as_data_frame()
-    # Calculate average precision with graph
     average_precision =\
-    _precision_recall_curve_(
-            test_data[model._model_json["response_column_name"]].\
-            as_data_frame().dropna(),
-            prob
-            )
+        RankingMetricScorer(model, _precision_recall_curve_, test_data, xval)
     return(average_precision)

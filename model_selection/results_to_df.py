@@ -14,7 +14,7 @@ from .metrics import RankingMetricScorerTrainValXval
 from ..preprocessing import dict_merge_key
 from ..plots import std_coef_plot
 
-def GridCVResults(grid_search, metric, valid=False):
+def GridCVResults(grid_search, metric, valid=False, pprint=False):
     """
     Function that takes an h2o grid search object and extracts training and cross validation
     metrics into a Pandas DataFrame along with grid search id's
@@ -55,11 +55,14 @@ def GridCVResults(grid_search, metric, valid=False):
     metric_df = pd.DataFrame.from_dict(merged_dict).T
     # Change column names
     metric_df.columns = colnames_list
-    metric_df.sort_values(sort_name, ascending=False, inplace=True)
+    metric_df = metric_df.sort_values(sort_name, ascending=False)
+    # Display
+    if pprint == True:
+        display(metric_df)
     return(metric_df)
 
 
-def ModelIdsResults(model_ids_list, metric, valid=False):
+def ModelIdsResults(model_ids_list, metric, valid=False, pprint=False):
     """
     Function that takes list of model_ids from h2o and extracts training and cross validation
     metrics into a Pandas DataFrame along with model_ids
@@ -97,11 +100,14 @@ def ModelIdsResults(model_ids_list, metric, valid=False):
         metric_df.sort_values('valid_'+metric, ascending=False, inplace=True)
     else:
         metric_df.sort_values('xval_'+metric, ascending=False, inplace=True)
+    if pprint == True:
+        display(metric_df)
     # Return Train/Xval evaluation metrics for each model id
     return(metric_df)
 
 
-def GridCVResultsWithMaxMetric(grid_search, maxmetric_name=None, valid=False):
+def GridCVResultsWithMaxMetric(grid_search, maxmetric_name=None, valid=False,
+                               pprint=False):
     """
     Create Results Data Frame on performance of chosen binary
     classifier metrics
@@ -124,7 +130,6 @@ def GridCVResultsWithMaxMetric(grid_search, maxmetric_name=None, valid=False):
     perf3_df : pandas.DataFrame
         Dataset of performance metrics for train, xval, valid
     """
-    from IPython.display import display
     # Find a model improves distinguishing between classes
     grid_search_perf1 = grid_search.\
         get_grid(sort_by='auc', decreasing=True)
@@ -150,12 +155,14 @@ def GridCVResultsWithMaxMetric(grid_search, maxmetric_name=None, valid=False):
             merge(perf3_df, perf2_df, how='inner',
                   right_index=True, left_index=True)
     # Display
-    display(perf3_df)
+    if pprint == True:
+        display(perf3_df)
     return(perf3_df)
 
 
 def GridCVResultsRankingMetric(grid_search, ranking_metric_function,
-                               training_frame, validation_frame=None):
+                               training_frame, validation_frame=None,
+                               pprint=False):
     """
     Function that takes an h2o grid search object and extracts training and cross validation
     metrics into a Pandas DataFrame along with grid search id's
@@ -197,6 +204,9 @@ def GridCVResultsRankingMetric(grid_search, ranking_metric_function,
         sort_by_metric = 'xval_' + ranking_metric_function.__name__
     ranking_metric_df = ranking_metric_df.sort_values([sort_by_metric],
                                                       ascending=False)
+    # Display
+    if pprint == True:
+        display(ranking_metric_df)
     return(ranking_metric_df)
 
 

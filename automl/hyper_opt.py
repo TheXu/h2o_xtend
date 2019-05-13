@@ -112,7 +112,7 @@ class hyper_opt:
         self.grid_search_list = grid_search_trained_list
 
 
-    def AllGridCVResults(self, metric):
+    def AllGridCVResults(self, metric, pprint=False):
         """
         Return Grid Search Results Datasets in a list on specified metric
         for all grid searches for every model specified
@@ -131,12 +131,13 @@ class hyper_opt:
             else:
                 valid = True
             grid_search_results_list = list(map(lambda g:
-                     GridCVResults(g, metric, valid),
+                     GridCVResults(g, metric, valid, pprint),
                      self.grid_search_list))
         return(grid_search_results_list)
 
 
-    def AllGridCVResultsWithMaxMetric(self, maxmetric_name=None):
+    def AllGridCVResultsWithMaxMetric(self, maxmetric_name=None,
+                                      pprint=False):
         """
         Create Results Data Frame on performance of chosen binary
         classifier metrics
@@ -166,12 +167,14 @@ class hyper_opt:
             else:
                 valid = True
             grid_search_results_list = list(map(lambda g:
-                     GridCVResultsWithMaxMetric(g, maxmetric_name, valid),
+                     GridCVResultsWithMaxMetric(g, maxmetric_name, valid,
+                                                pprint),
                      self.grid_search_list))
         return(grid_search_results_list)
 
 
-    def AllGridCVResultsRankingMetric(self, ranking_metric_function):
+    def AllGridCVResultsRankingMetric(self, ranking_metric_function,
+                                      pprint=False):
         """
         Create Results Data Frame on performance of chosen ranking metric
 
@@ -193,6 +196,7 @@ class hyper_opt:
         else:
             grid_search_results_list = list(map(lambda model:
                      GridCVResultsRankingMetric(model, ranking_metric_function,
-                                                self.train, self.valid),
+                                                self.train, self.valid,
+                                                pprint),
                      self.grid_search_list))
         return(grid_search_results_list)
