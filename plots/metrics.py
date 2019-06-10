@@ -8,9 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import precision_recall_curve, average_precision_score
 from sklearn.utils.fixes import signature
 
-from ..model_selection import RankingMetricScorer
-
-def _precision_recall_curve_(y_true, prob):
+def precision_recall_score_curve(y_true, prob):
     """
     Create precision-recall curve for a 2-Class Classifier and return the Average Precision Score
     
@@ -45,17 +43,4 @@ def _precision_recall_curve_(y_true, prob):
     plt.title('2-class Precision-Recall curve: AP={0:0.2f}'.format(
               average_precision))
     # Return Average Precision Score
-    return(average_precision)
-
-
-def AveragePrecisionScore(model, test_data, xval=False):
-    """
-    model : h2o.model.model_base.ModelBase
-
-    test_data : H2OFrame
-
-    xval : bool
-    """
-    average_precision =\
-        RankingMetricScorer(model, _precision_recall_curve_, test_data, xval)
     return(average_precision)

@@ -8,10 +8,10 @@ Created on 2019
 from .feature_importance import coef_norm
 from .feature_importance import std_coef_plot
 
-from .metrics import AveragePrecisionScore
+from .metrics import precision_recall_score_curve
 
 __all__ = [
     'coef_norm',
     'std_coef_plot',
-    'AveragePrecisionScore'
+    'precision_recall_score_curve'
 ]
