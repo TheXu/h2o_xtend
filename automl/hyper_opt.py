@@ -130,8 +130,9 @@ class hyper_opt:
                 valid = False
             else:
                 valid = True
-            grid_search_results_list = list(map(lambda g:
-                     GridCVResults(g, metric, valid, pprint),
+            # Define metric function
+            metric_function = lambda g: GridCVResults(g, metric, valid, pprint)
+            grid_search_results_list = list(map(metric_function,
                      self.grid_search_list))
         return(grid_search_results_list)
 
@@ -166,9 +167,11 @@ class hyper_opt:
                 valid = False
             else:
                 valid = True
-            grid_search_results_list = list(map(lambda g:
-                     GridCVResultsWithMaxMetric(g, maxmetric_name, valid,
-                                                pprint),
+            # Define metric function
+            metric_function = lambda g: GridCVResultsWithMaxMetric(g,
+                                        maxmetric_name, valid,
+                                        pprint)
+            grid_search_results_list = list(map(metric_function,
                      self.grid_search_list))
         return(grid_search_results_list)
 
@@ -194,9 +197,11 @@ class hyper_opt:
         if self.grid_search_list==None:
             print('Grid Search has not been performed yet\n')
         else:
-            grid_search_results_list = list(map(lambda model:
-                     GridCVResultsRankingMetric(model, ranking_metric_function,
+            # Define metric function
+            metric_function = lambda model: GridCVResultsRankingMetric(model,
+                                                ranking_metric_function,
                                                 self.train, self.valid,
-                                                pprint),
+                                                pprint)
+            grid_search_results_list = list(map(metric_function,
                      self.grid_search_list))
         return(grid_search_results_list)
