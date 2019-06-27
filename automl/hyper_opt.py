@@ -70,6 +70,7 @@ class hyper_opt:
             print('\n--------------------------------------------------')
             print('H2O Algorithm Used: ')
             print(model_list[0].algo)
+            print(model_list[0].params)
             print('\n')
             # Dataset columns and Dataset used for training models
             colnames_X = model_list[2]
@@ -82,7 +83,7 @@ class hyper_opt:
             print(params)
             print('\n')
             # Execute Grid Search
-            search_criteria = { 'strategy': "Cartesian" }
+            search_criteria = {'strategy': 'Cartesian'}
             grid_search = H2OGridSearch(model=model_list[0],
                                          hyper_params=params,
                                          search_criteria=search_criteria)
@@ -104,7 +105,7 @@ class hyper_opt:
 
         # Fit all models for all datasets, Return their Grid Search
         grid_search_trained_list =\
-            list(map(lambda li: run_grid_search(li), mpc_list))
+            list(map(run_grid_search, mpc_list))
         # Get rid of any NoneType's (from errored out models)
         grid_search_trained_list =\
             [x for x in grid_search_trained_list if x is not None]
