@@ -113,7 +113,7 @@ class hyper_opt:
         self.grid_search_list = grid_search_trained_list
 
 
-    def AllGridCVResults(self, metric, pprint=False):
+    def AllGridCVResults(self, metric, greater_is_better, pprint=False):
         """
         Return Grid Search Results Datasets in a list on specified metric
         for all grid searches for every model specified
@@ -132,13 +132,15 @@ class hyper_opt:
             else:
                 valid = True
             # Define metric function
-            metric_function = lambda g: GridCVResults(g, metric, valid, pprint)
+            metric_function = lambda g: GridCVResults(g, metric, valid, pprint
+                                                      ,greater_is_better)
             grid_search_results_list = list(map(metric_function,
                      self.grid_search_list))
         return(grid_search_results_list)
 
 
-    def AllGridCVResultsWithMaxMetric(self, maxmetric_name=None,
+    def AllGridCVResultsWithMaxMetric(self, greater_is_better,
+                                      maxmetric_name=None,
                                       pprint=False):
         """
         Create Results Data Frame on performance of chosen binary
@@ -171,13 +173,14 @@ class hyper_opt:
             # Define metric function
             metric_function = lambda g: GridCVResultsWithMaxMetric(g,
                                         maxmetric_name, valid,
-                                        pprint)
+                                        pprint, greater_is_better)
             grid_search_results_list = list(map(metric_function,
                      self.grid_search_list))
         return(grid_search_results_list)
 
 
     def AllGridCVResultsRankingMetric(self, ranking_metric_function,
+                                      greater_is_better,
                                       pprint=False):
         """
         Create Results Data Frame on performance of chosen ranking metric
@@ -202,7 +205,7 @@ class hyper_opt:
             metric_function = lambda model: GridCVResultsRankingMetric(model,
                                                 ranking_metric_function,
                                                 self.train, self.valid,
-                                                pprint)
+                                                pprint, greater_is_better)
             grid_search_results_list = list(map(metric_function,
                      self.grid_search_list))
         return(grid_search_results_list)
