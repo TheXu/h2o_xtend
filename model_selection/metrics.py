@@ -21,22 +21,31 @@ def RankingMetricScorer(model, ranking_metric_function, test_data,
     xval : bool
     """
     print('H2O Algorithm Used: ')
-    print(model.algo)
+    print('%s %s' %(model.algo, model.type))
+    # Specify score column
+    if model.type == 'classifier':
+        # Only for binary classifier right now
+        score_col = 'p1'
+    elif model.type == 'regressor':
+        score_col = 'predict'
+    elif model.type == 'unsupervised':
+        score = None
     if xval==False:
         print('\nNot using cross validation metrics')
         # Get scores
-        prob = model.predict(test_data)[2].as_data_frame()
+        score = model.predict(test_data)[score_col].as_data_frame()
     elif xval==True:
         print('\nUsing Training Data to validate cross validation predictions')
         # Get scores
-        prob = model.cross_validation_holdout_predictions()[2].as_data_frame()
+        score = model.cross_validation_holdout_predictions()[score_col].\
+            as_data_frame()
     # Calculate average precision with graph
     # Input parameters on y_true and y_score by position
     ranking_metric =\
     ranking_metric_function(
             test_data[model._model_json["response_column_name"]].\
             as_data_frame().dropna(),
-            prob
+            score
             )
     return(ranking_metric)
 

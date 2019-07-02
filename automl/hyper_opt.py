@@ -69,7 +69,7 @@ class hyper_opt:
             # Print Model Used
             print('\n--------------------------------------------------')
             print('H2O Algorithm Used: ')
-            print(model_list[0].algo)
+            print('%s %s' %(model_list[0].algo, model_list[0].type))
             print(model_list[0].params)
             print('\n')
             # Dataset columns and Dataset used for training models

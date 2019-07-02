@@ -14,7 +14,8 @@ from .metrics import RankingMetricScorerTrainValXval
 from ..preprocessing import dict_merge_key
 from ..plots import std_coef_plot
 
-def GridCVResults(grid_search, metric, valid=False, pprint=False):
+def GridCVResults(grid_search, metric,
+                  valid=False, pprint=False, greater_is_better=True):
     """
     Function that takes an h2o grid search object and extracts training and cross validation
     metrics into a Pandas DataFrame along with grid search id's
@@ -55,14 +56,15 @@ def GridCVResults(grid_search, metric, valid=False, pprint=False):
     metric_df = pd.DataFrame.from_dict(merged_dict).T
     # Change column names
     metric_df.columns = colnames_list
-    metric_df = metric_df.sort_values(sort_name, ascending=False)
+    metric_df = metric_df.sort_values(sort_name, ascending=not greater_is_better)
     # Display
     if pprint == True:
         display(metric_df)
     return(metric_df)
 
 
-def ModelIdsResults(model_ids_list, metric, valid=False, pprint=False):
+def ModelIdsResults(model_ids_list, metric,
+                    valid=False, pprint=False, greater_is_better=True):
     """
     Function that takes list of model_ids from h2o and extracts training and cross validation
     metrics into a Pandas DataFrame along with model_ids
@@ -97,9 +99,11 @@ def ModelIdsResults(model_ids_list, metric, valid=False, pprint=False):
         valid_list = list(map(lambda x: x(xval=True), methods_list))
         # Create new column with validation metrics
         metric_df['valid_'+metric] = pd.Series(valid_list)
-        metric_df.sort_values('valid_'+metric, ascending=False, inplace=True)
+        metric_df.sort_values('valid_'+metric,
+                              ascending=not greater_is_better, inplace=True)
     else:
-        metric_df.sort_values('xval_'+metric, ascending=False, inplace=True)
+        metric_df.sort_values('xval_'+metric,
+                              ascending=not greater_is_better, inplace=True)
     if pprint == True:
         display(metric_df)
     # Return Train/Xval evaluation metrics for each model id
@@ -162,7 +166,7 @@ def GridCVResultsWithMaxMetric(grid_search, maxmetric_name=None, valid=False,
 
 def GridCVResultsRankingMetric(grid_search, ranking_metric_function,
                                training_frame, validation_frame=None,
-                               pprint=False):
+                               pprint=False, greater_is_better=True):
     """
     Function that takes an h2o grid search object and extracts training and cross validation
     metrics into a Pandas DataFrame along with grid search id's
@@ -187,13 +191,14 @@ def GridCVResultsRankingMetric(grid_search, ranking_metric_function,
         training and cross validation (and validation) ranking metrics into a
         Pandas DataFrame along with grid search id's
     """
-    # Iterate over grid search models, and put all results into a dataframe
-    ranking_metric_df = pd.concat(list(map(
-            lambda model: RankingMetricScorerTrainValXval(model,
+    # Create metric function
+    metric_function = lambda model: RankingMetricScorerTrainValXval(model,
                                                           ranking_metric_function,
                                                           training_frame,
-                                                          validation_frame),
-                                                          grid_search.models
+                                                          validation_frame)
+    # Iterate over grid search models, and put all results into a dataframe
+    ranking_metric_df = pd.concat(list(map(
+            metric_function, grid_search.models
                                                           )))
     # Sort by Metric defined
     if validation_frame != None:
@@ -203,7 +208,7 @@ def GridCVResultsRankingMetric(grid_search, ranking_metric_function,
         # Else sort by xval metrics
         sort_by_metric = 'xval_' + ranking_metric_function.__name__
     ranking_metric_df = ranking_metric_df.sort_values([sort_by_metric],
-                                                      ascending=False)
+                                                      ascending=not greater_is_better)
     # Display
     if pprint == True:
         display(ranking_metric_df)
