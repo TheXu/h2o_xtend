@@ -138,7 +138,7 @@ class hyper_opt:
         return(grid_search_results_list)
 
 
-    def AllGridCVResultsWithMaxMetric(self, greater_is_better,
+    def AllGridCVResultsWithMaxMetric(self,
                                       maxmetric_name=None,
                                       pprint=False):
         """
@@ -170,9 +170,9 @@ class hyper_opt:
             else:
                 valid = True
             # Define metric function
-            metric_function = lambda g: GridCVResultsWithMaxMetric(g,
+            metric_function = lambda g: GridCVResultsWithMaxMetric(g, 
                                         maxmetric_name, valid,
-                                        pprint, greater_is_better)
+                                        pprint)
             grid_search_results_list = list(map(metric_function,
                      self.grid_search_list))
         return(grid_search_results_list)
