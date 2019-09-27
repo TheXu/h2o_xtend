@@ -49,7 +49,9 @@ class hyper_opt:
         col_list : list
             list of lists of str or numeric datatypes, representing predictory or independent variables to use
             for each respective model in models_list
-        
+
+        valid : h2oframe
+            Validation data set
         Returns
         -------
         grid_search_trainned_list : list
@@ -126,7 +128,7 @@ class hyper_opt:
         if self.grid_search_list==None:
             print('Grid Search has not been performed yet\n')
         else:
-            if self.valid==None:
+            if self.valid is None:
                 valid = False
             else:
                 valid = True
@@ -165,7 +167,7 @@ class hyper_opt:
         if self.grid_search_list==None:
             print('Grid Search has not been performed yet\n')
         else:
-            if self.valid == None:
+            if self.valid is None:
                 valid = False
             else:
                 valid = True
@@ -197,7 +199,7 @@ class hyper_opt:
         grid_search_results_list : list
             list of Datasets of performance metrics for train, xval, valid
         """
-        if self.grid_search_list==None:
+        if self.grid_search_list is None:
             print('Grid Search has not been performed yet\n')
         else:
             # Define metric function

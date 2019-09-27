@@ -12,6 +12,8 @@ def RankingMetricScorer(model, ranking_metric_function, test_data,
     """
     Use Ranking Metric function (as in sklearn) for h2o models
 
+    Parameters
+    ----------
     model : h2o.model.model_base.ModelBase
 
     ranking_metric_function : function
@@ -62,7 +64,7 @@ def RankingMetricScorerTrainValXval(model, ranking_metric_function,
     # Put the metrics together into a dictionary
     evaluation_dict = {'train_' + ranking_metric_function.__name__ : train_metric,
                   'xval_' + ranking_metric_function.__name__ : xval_metric}
-    if validation_frame != None:
+    if validation_frame is not None:
         valid_metric = RankingMetricScorer(model, ranking_metric_function,
                                       validation_frame, xval=False)
         evaluation_dict['valid_' + ranking_metric_function.__name__] =\

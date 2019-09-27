@@ -145,7 +145,7 @@ def GridCVResultsWithMaxMetric(grid_search, maxmetric_name=None, valid=False,
         sort_by_metric = 'xval_' + maxmetric_name
 
     # If we want to add another metric
-    if maxmetric_name != None:
+    if maxmetric_name is not None:
         # Find a model that improves Precision and Recall Curve
         grid_search_perf2 = grid_search.\
             get_grid(sort_by=maxmetric_name, decreasing=True)
@@ -201,10 +201,10 @@ def GridCVResultsRankingMetric(grid_search, ranking_metric_function,
             metric_function, grid_search.models
                                                           )))
     # Sort by Metric defined
-    if validation_frame != None:
+    if validation_frame is not None:
         # If we have validation frame, sort by validation metric
         sort_by_metric = 'valid_' + ranking_metric_function.__name__
-    elif validation_frame == None:
+    elif validation_frame is None:
         # Else sort by xval metrics
         sort_by_metric = 'xval_' + ranking_metric_function.__name__
     ranking_metric_df = ranking_metric_df.sort_values([sort_by_metric],
