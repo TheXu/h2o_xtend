@@ -6,7 +6,7 @@ Created on Fri May  3 10:44:42 2019
 """
 import matplotlib.pyplot as plt
 from sklearn.metrics import precision_recall_curve, average_precision_score
-from sklearn.utils.fixes import signature
+from funcsigs import signature
 
 def precision_recall_score_curve(y_true, prob):
     """
