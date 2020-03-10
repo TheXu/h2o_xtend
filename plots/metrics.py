@@ -7,6 +7,7 @@ Created on Fri May  3 10:44:42 2019
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc, classification_report
 from sklearn.calibration import calibration_curve
+from sklearn import metrics
 from sklearn.metrics import precision_recall_curve, average_precision_score
 from funcsigs import signature
 
